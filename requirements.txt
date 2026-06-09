@@ -7,3 +7,7 @@ pytest==8.3.0
 # anthropic==0.40.0
 # google-generativeai==0.8.0
 # openai==1.50.0
+# Optional vector store — app/vectorstore_chroma.py (lazy import):
+# chromadb>=1.0
+# Optional LangChain retriever adapter — app/langchain_adapter.py (lazy import):
+# langchain-core>=0.3
