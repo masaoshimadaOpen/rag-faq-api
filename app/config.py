@@ -14,6 +14,8 @@ from dataclasses import dataclass
 class Settings:
     llm_provider: str = "stub"
     embedding_provider: str = "hash"
+    vector_store: str = "memory"        # "memory" | "chroma"
+    chroma_path: str | None = None      # persist dir; None = in-process/ephemeral
     top_k: int = 3
     chunk_size: int = 400
     chunk_overlap: int = 40
@@ -39,6 +41,8 @@ def load_settings() -> Settings:
     return Settings(
         llm_provider=os.getenv("LLM_PROVIDER", "stub").strip().lower() or "stub",
         embedding_provider=os.getenv("EMBEDDING_PROVIDER", "hash").strip().lower() or "hash",
+        vector_store=os.getenv("VECTOR_STORE", "memory").strip().lower() or "memory",
+        chroma_path=os.getenv("CHROMA_PATH") or None,
         top_k=_int("TOP_K", 3),
         chunk_size=_int("CHUNK_SIZE", 400),
         chunk_overlap=_int("CHUNK_OVERLAP", 40),

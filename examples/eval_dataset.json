@@ -1,0 +1,20 @@
+{
+  "_note": "Labelled retrieval eval set. Some questions paraphrase the answer with little lexical overlap on purpose, so the offline hashing (bag-of-tokens) embedder visibly MISSES them — that gap is the motivation for real embeddings (set EMBEDDING_PROVIDER) and better chunking.",
+  "documents": [
+    {"id": "refunds", "text": "Refunds are processed within 5 business days after approval. To request a refund, open a ticket from your account page and include the order number."},
+    {"id": "shipping", "text": "Standard shipping takes 3 to 7 days. Express shipping is delivered the next business day. International shipping may take up to 14 days."},
+    {"id": "hours", "text": "Our support team is available Monday to Friday, 9am to 6pm JST. We are closed on Japanese public holidays."},
+    {"id": "account", "text": "You can reset your password from the login page using the forgot password link. Two-factor authentication can be enabled in account settings."},
+    {"id": "payment", "text": "We accept credit cards, PayPal, and bank transfer. Invoices are issued automatically after each successful payment."}
+  ],
+  "examples": [
+    {"question": "How long do refunds take?", "relevant_ids": ["refunds"]},
+    {"question": "How do I request a refund?", "relevant_ids": ["refunds"]},
+    {"question": "How fast is express shipping?", "relevant_ids": ["shipping"]},
+    {"question": "When is support available?", "relevant_ids": ["hours"]},
+    {"question": "How do I reset my password?", "relevant_ids": ["account"]},
+    {"question": "What payment methods do you accept?", "relevant_ids": ["payment"]},
+    {"question": "What is your money-back turnaround time?", "relevant_ids": ["refunds"]},
+    {"question": "Can I enable two-step login security?", "relevant_ids": ["account"]}
+  ]
+}

@@ -23,12 +23,25 @@ from .schemas import (
 from .vectorstore import InMemoryVectorStore
 
 
+def make_store(settings):
+    """Pick a vector store, falling back to in-memory if Chroma is unavailable."""
+    if settings.vector_store == "chroma":
+        try:
+            from .vectorstore_chroma import ChromaVectorStore  # lazy/optional
+
+            return ChromaVectorStore(persist_path=settings.chroma_path)
+        except Exception:
+            # Missing chromadb or bad path → stay bootable in-memory.
+            pass
+    return InMemoryVectorStore()
+
+
 def build_engine() -> RAGEngine:
     """Construct a RAGEngine from current settings (providers auto-selected)."""
     settings = load_settings()
     return RAGEngine(
         embedder=get_embedder(settings),
-        store=InMemoryVectorStore(),
+        store=make_store(settings),
         llm=get_llm(settings),
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
@@ -47,6 +60,7 @@ def health() -> dict:
         "status": "ok",
         "llm_provider": s.llm_provider,
         "embedding_provider": s.embedding_provider,
+        "vector_store": type(app.state.engine.store).__name__,
         "indexed_chunks": len(app.state.engine.store),
     }
 
