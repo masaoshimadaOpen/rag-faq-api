@@ -10,7 +10,7 @@ from dataclasses import dataclass
 
 from .embeddings import Embedder
 from .llm import LLMProvider, SYSTEM_PROMPT, build_prompt
-from .vectorstore import InMemoryVectorStore, StoredChunk
+from .vectorstore import InMemoryVectorStore, SearchHit, StoredChunk
 
 
 def chunk_text(text: str, size: int, overlap: int) -> list[str]:
@@ -76,9 +76,17 @@ class RAGEngine:
 
         return IngestResult(ingested_documents=len(documents), total_chunks=len(all_chunks))
 
-    def ask(self, question: str, top_k: int = 3) -> Answer:
+    def retrieve(self, question: str, top_k: int = 3) -> list[SearchHit]:
+        """Retrieve top-k chunks for a question — no LLM call.
+
+        Separated from `ask` so retrieval quality can be evaluated on its own
+        (the eval harness runs this thousands of times at zero LLM cost).
+        """
         query_vec = self.embedder.embed([question])[0]
-        hits = self.store.search(query_vec, top_k=top_k)
+        return self.store.search(query_vec, top_k=top_k)
+
+    def ask(self, question: str, top_k: int = 3) -> Answer:
+        hits = self.retrieve(question, top_k=top_k)
         contexts = [h.chunk.text for h in hits]
 
         if not contexts:
